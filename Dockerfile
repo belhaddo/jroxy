@@ -1,12 +1,12 @@
 # Stage 1: Build
-FROM azul/zulu-openjdk:17-latest AS build
+FROM openjdk:17-jdk-alpine AS build
 
 # Set working directory
 WORKDIR /app
 
 # Copy pom.xml and download dependencies
 COPY pom.xml .
-RUN mvn dependency:go-offline
+RUN mvn dependency:resolve
 
 # Copy source code
 COPY src ./src
