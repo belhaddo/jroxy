@@ -37,7 +37,7 @@ jobs:
         run: docker build -t jroxy:${IMAGE_TAG} .
 
       - name: Save Docker image as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: jroxy-image
           path: jroxy:${IMAGE_TAG} # this will save the image ID
