@@ -19,3 +19,6 @@ proxy:
 
 server:
   port: ${proxy.listen.port}
+logging:
+  level:
+    root: DEBUG

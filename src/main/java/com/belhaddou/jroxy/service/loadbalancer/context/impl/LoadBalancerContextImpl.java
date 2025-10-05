@@ -19,21 +19,29 @@ public class LoadBalancerContextImpl implements LoadBalancerContext {
     private final Map<String, LoadBalancerStrategy> strategyMap;
     private final ServiceRegistry serviceRegistry;
 
-    public JRoxyConfig.Host chooseInstance(String servicePath) {
+    public JRoxyConfig.Host chooseInstance(String subdomain) {
         List<InstanceWithHealth> instanceWithHealth = serviceRegistry.getRegistry()
-                .get(servicePath);
+                .get(subdomain);
 
-        if (instanceWithHealth == null) {
-            throw new IllegalArgumentException("path: /" + servicePath + " not found !");
-        }
+        JRoxyConfig.Services service = jRoxyConfig.getServices()
+                .stream().filter(s -> subdomain.equals(s.getName()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("subdomain : " + subdomain + " is not part of the configuration !"));
 
         List<JRoxyConfig.Host> hosts = instanceWithHealth.stream()
                 .filter(instance -> instance.getHealthy() == true)
                 .map(InstanceWithHealth::getHost)
                 .toList();
 
-        String defaultStrategy = jRoxyConfig.getDefaultLoadBalancing();
+        String defaultStrategy = service.getLoadBalancer() == null ? jRoxyConfig.getDefaultLoadBalancing()
+                : service.getLoadBalancer();
+
         LoadBalancerStrategy strategy = strategyMap.get(defaultStrategy);
+
+        if (strategy == null) {
+            throw new IllegalArgumentException("Strategy " + strategy + "is not yet supported !");
+        }
+
         return strategy.select(hosts);
     }
 

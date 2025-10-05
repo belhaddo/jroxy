@@ -31,7 +31,6 @@ public class ServiceRegistryImpl implements ServiceRegistry {
                             .stream()
                             .map(host -> new InstanceWithHealth(host, true))
                             .toList();
-                    //TODO: resolve the service name from the domain
                     registry.put(service.getName(), instanceWithHealths);
                 });
     }

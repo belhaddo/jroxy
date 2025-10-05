@@ -1,17 +1,18 @@
 package com.belhaddou.jroxy.util;
 
-import com.belhaddou.jroxy.configuration.JRoxyConfig;
-
 public class UrlUtils {
-
     /**
-     * Construct url from Host Object
      *
-     * @param selectedInstance
+     * @param host
      * @return
      */
 
-    public static String getUrl(JRoxyConfig.Host selectedInstance) {
-        return selectedInstance.getAddress() + ":" + selectedInstance.getPort();
+    public static String extractSubdomain(String host, String baseHost) {
+        if (host == null) return "";
+        String cleanHost = host.split(":")[0]; // remove port
+        if (cleanHost.contains("." + baseHost)) {
+            return cleanHost.substring(0, cleanHost.indexOf("." + baseHost));
+        }
+        return "";
     }
 }

@@ -18,9 +18,11 @@ public class JRoxyController {
     @GetMapping("/**")
     public ResponseEntity<byte[]> forward(HttpServletRequest request,
                                           @RequestBody(required = false) byte[] body) {
+        String hostHeader = request.getHeader("Host");
         String path = request.getRequestURI();
+        String query = request.getQueryString();
         log.debug("Going to proxy request to : {}", path);
-        return reverseProxyService.proxyGet(path);
+        return reverseProxyService.proxyForward(hostHeader, path, query, body, request.getMethod());
 
     }
 
