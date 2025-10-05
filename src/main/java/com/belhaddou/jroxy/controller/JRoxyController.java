@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -16,13 +15,8 @@ public class JRoxyController {
     private final ReverseProxyService<byte[]> reverseProxyService;
 
     @GetMapping("/**")
-    public ResponseEntity<byte[]> forward(HttpServletRequest request,
-                                          @RequestBody(required = false) byte[] body) {
-        String hostHeader = request.getHeader("Host");
-        String path = request.getRequestURI();
-        String query = request.getQueryString();
-        log.debug("Going to proxy request to : {}", path);
-        return reverseProxyService.proxyForward(hostHeader, path, query, body, request.getMethod());
+    public ResponseEntity<byte[]> forward(HttpServletRequest request) {
+        return reverseProxyService.forwardGET(request);
 
     }
 

@@ -1,9 +1,8 @@
 package com.belhaddou.jroxy.service.proxy;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 
 public interface ReverseProxyService<T> {
-    public ResponseEntity<byte[]> proxyForward(String hostHeader, String path, String query,
-                                               byte[] body,
-                                               String method);
+    ResponseEntity<byte[]> forwardGET(HttpServletRequest request);
 }
