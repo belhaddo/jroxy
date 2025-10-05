@@ -2,10 +2,9 @@ package com.belhaddou.jroxy.service.cache.impl;
 
 import com.belhaddou.jroxy.service.cache.JRoxyCache;
 import lombok.RequiredArgsConstructor;
+import org.ehcache.Cache;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-
-import org.ehcache.Cache;
 
 @Service
 @RequiredArgsConstructor
