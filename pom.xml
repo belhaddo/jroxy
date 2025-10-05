@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.belhaddou</groupId>
-    <artifactId>jproxy</artifactId>
+    <artifactId>jroxy</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>jproxy</name>
+    <name>jroxy</name>
     <description>Demo project for Spring Boot</description>
     <url/>
     <licenses>
@@ -33,7 +33,7 @@
         <!--        Spring-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webflux</artifactId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
         <dependency>

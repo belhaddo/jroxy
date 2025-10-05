@@ -1,23 +1,50 @@
 package com.belhaddou.jroxy.configuration;
 
-import com.belhaddou.jroxy.model.Listen;
-import com.belhaddou.jroxy.model.RateLimiterConfig;
-import com.belhaddou.jroxy.model.ServiceConfig;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
-@Configuration
-@EnableConfigurationProperties
-@ConfigurationProperties(prefix = "proxy")
 @Data
+@Component
+@ConfigurationProperties(prefix = "proxy")
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class JRoxyConfig {
-    public class ProxyConfig {
-        private Listen listen;
-        private List<ServiceConfig> services;
-        private RateLimiterConfig rateLimiter;
+
+    private String defaultLoadBalancing;
+    private Listen listen;
+    @Builder.Default
+    private List<Services> services = new ArrayList<>();
+
+    @Data
+    public static class DefaultLoadBalancing {
+        private String strategy;
+    }
+
+    @Data
+    public static class Listen {
+        private String address;
+        private int port;
+    }
+
+    @Data
+    public static class Services {
+        private String name;
+        private String domain;
+        private String loadBalancer;
+        private List<Host> hosts;
+    }
+
+    @Data
+    public static class Host {
+        private String address;
+        private int port;
     }
 }
