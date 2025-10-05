@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM azul/zulu-openjdk:17-maven AS build
+FROM azul/zulu-openjdk:17-latest AS build
 
 # Set working directory
 WORKDIR /app
@@ -15,7 +15,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Stage 2: Runtime
-FROM azul/zulu-openjdk:17-jre
+FROM azul/zulu-openjdk:17-jre-latest
 
 # Set working directory
 WORKDIR /app
