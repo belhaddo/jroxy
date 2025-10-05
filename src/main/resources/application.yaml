@@ -10,12 +10,15 @@ proxy:
   services:
     - name: my-service
       domain: my-service.my-company.com
-      load-balancer: "randomStrategy"
+      load-balancer: "roundRobinStrategy"
       hosts:
-        - address: "10.0.0.1"
-          port: 9090
-        - address: "10.0.0.2"
-          port: 9090
+        - address: "127.0.0.1"
+          port: 8081
+        - address: "127.0.0.1"
+          port: 8082
 
 server:
   port: ${proxy.listen.port}
+logging:
+  level:
+    root: DEBUG
