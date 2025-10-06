@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 
-public interface ReverseProxyService<T> {
-    ResponseEntity<byte[]> forwardGET(HttpServletRequest request) throws IOException;
+public interface ForwardsService {
+
+    ResponseEntity<byte[]> proxyForward(HttpServletRequest request) throws IOException;
 }

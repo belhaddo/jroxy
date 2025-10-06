@@ -3,7 +3,7 @@ package com.belhaddou.jroxy.service.proxy.impl;
 import com.belhaddou.jroxy.configuration.JRoxyConfig;
 import com.belhaddou.jroxy.model.InstanceWithHealth;
 import com.belhaddou.jroxy.service.loadbalancer.context.LoadBalancerContext;
-import com.belhaddou.jroxy.service.proxy.ReverseProxyService;
+import com.belhaddou.jroxy.service.proxy.ForwardsService;
 import com.belhaddou.jroxy.service.registry.ServiceRegistry;
 import com.belhaddou.jroxy.util.UrlUtils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,28 +14,25 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class ReverseProxyServiceImpl implements ReverseProxyService<byte[]> {
+public class ForwardServiceImpl implements ForwardsService {
+
     private final LoadBalancerContext loadBalancerContext;
     private final RestTemplate restTemplate;
     private final ServiceRegistry serviceRegistry;
     private final JRoxyConfig jRoxyConfig;
 
-    @Override
-    public ResponseEntity<byte[]> forwardGET(HttpServletRequest request) {
+
+    public ResponseEntity<byte[]> proxyForward(HttpServletRequest request) throws IOException {
         String hostHeader = request.getHeader("Host");
         String path = request.getRequestURI();
         String query = request.getQueryString();
-        return proxyForward(hostHeader, path, query, null, HttpMethod.GET.name());
-    }
-
-    public ResponseEntity<byte[]> proxyForward(String hostHeader, String path, String query,
-                                               byte[] body,
-                                               String method) {
+        byte[] body = request.getInputStream().readAllBytes();
 
         String subdomain = UrlUtils.extractSubdomain(hostHeader, jRoxyConfig.getListen().getAddress());
         log.debug("Going to proxy request to service: {}", subdomain);
@@ -52,7 +49,7 @@ public class ReverseProxyServiceImpl implements ReverseProxyService<byte[]> {
 
         while (attempts < maxAttempts) {
             try {
-                return getResponseEntity(path, query, body, method, subdomain);
+                return getResponseEntity(path, query, body, request.getMethod(), subdomain);
             } catch (RestClientException ex) {
                 log.debug("Attempt {} failed for subdomain {}: {}", attempts + 1, subdomain, ex.getMessage());
                 attempts++;
