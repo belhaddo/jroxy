@@ -17,8 +17,15 @@ jobs:
         with:
           java-version: 17
           distribution: 'temurin'
-      - name: Build and run tests
-        run: mvn clean test
+
+      - name: Build and run tests with coverage
+        run: mvn clean verify
+
+      - name: Upload JaCoCo coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: target/site/jacoco/
 
   build-image:
     name: Build Docker Image

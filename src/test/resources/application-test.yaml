@@ -1,0 +1,17 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+proxy:
+  default-load-balancing: "randomStrategy"
+  listen:
+    address: "127.0.0.1"
+    port: 8080
+  services:
+    - name: test
+      domain: test.my-company.com
+      load-balancer: "roundRobinStrategy"
+      hosts:
+        - address: "0.0.0.0"
+          port: 0000
+        - address: "0.0.0.0"
+          port: 0000

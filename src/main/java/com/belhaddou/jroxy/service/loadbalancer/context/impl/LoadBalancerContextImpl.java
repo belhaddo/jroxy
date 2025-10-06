@@ -1,6 +1,7 @@
 package com.belhaddou.jroxy.service.loadbalancer.context.impl;
 
 import com.belhaddou.jroxy.configuration.JRoxyConfig;
+import com.belhaddou.jroxy.exception.JRoxyIllegalArgumentException;
 import com.belhaddou.jroxy.model.InstanceWithHealth;
 import com.belhaddou.jroxy.service.loadbalancer.context.LoadBalancerContext;
 import com.belhaddou.jroxy.service.loadbalancer.strategy.LoadBalancerStrategy;
@@ -43,7 +44,7 @@ public class LoadBalancerContextImpl implements LoadBalancerContext {
         LoadBalancerStrategy selectedStrategy = strategyMap.get(strategy);
 
         if (selectedStrategy == null) {
-            throw new IllegalArgumentException("Strategy " + strategy + "is not yet supported !");
+            throw new JRoxyIllegalArgumentException("Strategy " + strategy + "is not yet supported !");
         }
 
         return selectedStrategy.select(hosts);

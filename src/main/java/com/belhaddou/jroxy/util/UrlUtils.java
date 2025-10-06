@@ -12,18 +12,17 @@ public class UrlUtils {
     /***
      *
      * @param request
-     * @param baseHost
      * @return subdomain
      */
 
-    public static String extractSubdomain(HttpServletRequest request, String baseHost) {
+    public static String extractSubdomain(HttpServletRequest request) {
         String host = request.getHeader("Host");
         log.debug("extracting host from url : {}", host);
         if (host == null) return "";
-        // select only host part without port
-        String cleanHost = host.split(":")[0];
-        if (cleanHost.contains("." + baseHost)) {
-            return cleanHost.substring(0, cleanHost.indexOf("." + baseHost));
+        String fullDomain = host.split(":")[0];
+        String[] parts = fullDomain.split("\\.");
+        if (parts.length >= 3) {
+            return parts[0];
         }
         return "";
     }

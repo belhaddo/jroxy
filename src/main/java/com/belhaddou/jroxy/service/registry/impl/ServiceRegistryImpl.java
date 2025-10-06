@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class ServiceRegistryImpl implements ServiceRegistry {
     private final JRoxyConfig jRoxyConfig;
-    private Map<String, List<InstanceWithHealth>> registry;
+    private final Map<String, List<InstanceWithHealth>> registry;
 
     @Autowired
     public ServiceRegistryImpl(JRoxyConfig jRoxyConfig) {
