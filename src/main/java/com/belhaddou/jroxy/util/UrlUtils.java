@@ -1,20 +1,24 @@
 package com.belhaddou.jroxy.util;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 
 import java.util.Collections;
 import java.util.Enumeration;
 
+@Slf4j
 public class UrlUtils {
-
-    /**
+    /***
      *
-     * @param host
-     * @return
+     * @param request
+     * @param baseHost
+     * @return subdomain
      */
 
-    public static String extractSubdomain(String host, String baseHost) {
+    public static String extractSubdomain(HttpServletRequest request, String baseHost) {
+        String host = request.getHeader("Host");
+        log.debug("extracting host from url : {}", host);
         if (host == null) return "";
         // select only host part without port
         String cleanHost = host.split(":")[0];

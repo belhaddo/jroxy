@@ -16,8 +16,7 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 @EnableCaching
 public class EhCacheConfig {
-    private final String HTTP_CACHE = "httpCache";
-
+    private final String HTTP_CACHE = "HttpOriginResponse";
 
     @Bean
     public CacheManager ehCacheManager() {
@@ -27,7 +26,7 @@ public class EhCacheConfig {
                                         String.class,
                                         Object.class,
                                         ResourcePoolsBuilder.heap(1000))
-                                .withExpiry(Expirations.timeToLiveExpiration(Duration.of(10, TimeUnit.SECONDS)))
+                                .withExpiry(Expirations.timeToLiveExpiration(Duration.of(120, TimeUnit.SECONDS)))
                 )
                 .build(true);
 

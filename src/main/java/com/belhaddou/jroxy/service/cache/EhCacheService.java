@@ -1,6 +1,6 @@
 package com.belhaddou.jroxy.service.cache;
 
-public interface JRoxyCache<T> {
+public interface EhCacheService<T> {
     T get(String key);
 
     void put(String key, T value);

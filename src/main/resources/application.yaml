@@ -16,6 +16,14 @@ proxy:
           port: 8081
         - address: "127.0.0.1"
           port: 8082
+    - name: my-service-a
+      domain: my-service-a.my-company.com
+      load-balancer: "roundRobinStrategy"
+      hosts:
+        - address: "127.0.0.1"
+          port: 9091
+        - address: "127.0.0.1"
+          port: 9091
 
 server:
   port: ${proxy.listen.port}
