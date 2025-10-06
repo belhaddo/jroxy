@@ -30,7 +30,7 @@ public class JRoxyController {
                     RequestMethod.HEAD
             }
     )
-    public ResponseEntity<byte[]> forwardOtherMethods(HttpServletRequest request) throws IOException {
+    public ResponseEntity<byte[]> forward(HttpServletRequest request) throws IOException {
         String method = request.getMethod();
         log.debug("Proxying {} request to {}", method, request.getRequestURI());
 
@@ -38,7 +38,7 @@ public class JRoxyController {
             case "GET":
                 return reverseProxyService.forwardGET(request);
             case "POST", "PATCH", "PUT", "DELETE", "OPTIONS", "HEAD":
-                return forwardsService.proxyForward(request);
+                return forwardsService.forward(request);
             default:
                 log.warn("Unsupported method: {}", method);
                 return ResponseEntity.status(405).build();

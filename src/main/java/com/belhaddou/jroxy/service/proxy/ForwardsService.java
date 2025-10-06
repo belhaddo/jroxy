@@ -7,5 +7,5 @@ import java.io.IOException;
 
 public interface ForwardsService {
 
-    ResponseEntity<byte[]> proxyForward(HttpServletRequest request) throws IOException;
+    ResponseEntity<byte[]> forward(HttpServletRequest request) throws IOException;
 }

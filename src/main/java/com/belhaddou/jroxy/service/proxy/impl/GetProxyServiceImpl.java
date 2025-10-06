@@ -20,7 +20,7 @@ public class GetProxyServiceImpl implements ReverseProxyService<byte[]> {
     @Override
     public ResponseEntity<byte[]> forwardGET(HttpServletRequest request) throws IOException {
         //TODO: add caching capability
-        return forwardsService.proxyForward(request);
+        return forwardsService.forward(request);
     }
 
 }

@@ -28,7 +28,7 @@ public class ForwardServiceImpl implements ForwardsService {
     private final JRoxyConfig jRoxyConfig;
 
 
-    public ResponseEntity<byte[]> proxyForward(HttpServletRequest request) throws IOException {
+    public ResponseEntity<byte[]> forward(HttpServletRequest request) throws IOException {
         String hostHeader = request.getHeader("Host");
         String path = request.getRequestURI();
         String query = request.getQueryString();
