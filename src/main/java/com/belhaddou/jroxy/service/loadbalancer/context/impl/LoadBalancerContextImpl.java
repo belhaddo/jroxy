@@ -6,6 +6,7 @@ import com.belhaddou.jroxy.service.loadbalancer.context.LoadBalancerContext;
 import com.belhaddou.jroxy.service.loadbalancer.strategy.LoadBalancerStrategy;
 import com.belhaddou.jroxy.service.registry.ServiceRegistry;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class LoadBalancerContextImpl implements LoadBalancerContext {
 
     private final JRoxyConfig jRoxyConfig;
@@ -32,17 +34,19 @@ public class LoadBalancerContextImpl implements LoadBalancerContext {
                 .filter(instance -> instance.getHealthy() == true)
                 .map(InstanceWithHealth::getHost)
                 .toList();
+        log.debug("Load balancer found {} number of host are available for service {}", hosts.size(), service.getName());
 
-        String defaultStrategy = service.getLoadBalancer() == null ? jRoxyConfig.getDefaultLoadBalancing()
+        String strategy = service.getLoadBalancer() == null ? jRoxyConfig.getDefaultLoadBalancing()
                 : service.getLoadBalancer();
+        log.debug("Going to use Load balancing strategy : {}", strategy);
 
-        LoadBalancerStrategy strategy = strategyMap.get(defaultStrategy);
+        LoadBalancerStrategy selectedStrategy = strategyMap.get(strategy);
 
-        if (strategy == null) {
+        if (selectedStrategy == null) {
             throw new IllegalArgumentException("Strategy " + strategy + "is not yet supported !");
         }
 
-        return strategy.select(hosts);
+        return selectedStrategy.select(hosts);
     }
 
 }

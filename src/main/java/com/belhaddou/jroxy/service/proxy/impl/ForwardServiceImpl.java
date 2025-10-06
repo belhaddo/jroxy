@@ -3,7 +3,7 @@ package com.belhaddou.jroxy.service.proxy.impl;
 import com.belhaddou.jroxy.configuration.JRoxyConfig;
 import com.belhaddou.jroxy.model.InstanceWithHealth;
 import com.belhaddou.jroxy.service.loadbalancer.context.LoadBalancerContext;
-import com.belhaddou.jroxy.service.proxy.ReverseProxyService;
+import com.belhaddou.jroxy.service.proxy.ForwardsService;
 import com.belhaddou.jroxy.service.registry.ServiceRegistry;
 import com.belhaddou.jroxy.util.UrlUtils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,49 +14,48 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class ReverseProxyServiceImpl implements ReverseProxyService<byte[]> {
+public class ForwardServiceImpl implements ForwardsService {
+
     private final LoadBalancerContext loadBalancerContext;
     private final RestTemplate restTemplate;
     private final ServiceRegistry serviceRegistry;
     private final JRoxyConfig jRoxyConfig;
 
-    @Override
-    public ResponseEntity<byte[]> forwardGET(HttpServletRequest request) {
+
+    public ResponseEntity<byte[]> forward(HttpServletRequest request, byte[] body) throws IOException {
+        // get host
         String hostHeader = request.getHeader("Host");
-        String path = request.getRequestURI();
-        String query = request.getQueryString();
-        return proxyForward(hostHeader, path, query, null, HttpMethod.GET.name());
-    }
-
-    public ResponseEntity<byte[]> proxyForward(String hostHeader, String path, String query,
-                                               byte[] body,
-                                               String method) {
-
+        log.debug("extracting host from url : {}", hostHeader);
+        // extract the subdomain
         String subdomain = UrlUtils.extractSubdomain(hostHeader, jRoxyConfig.getListen().getAddress());
-        log.debug("Going to proxy request to service: {}", subdomain);
+        log.debug("extracting subdomain from url : {}", subdomain);
 
         if (subdomain.isEmpty()) {
+            log.debug("No subdomain found, hence returning BAD_GATEWAY !");
             return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
         }
 
         List<InstanceWithHealth> totalHosts = serviceRegistry.getRegistry().get(subdomain);
         //max attempts equals to the number of availalbe instances
         Integer maxAttempts = totalHosts != null ? totalHosts.size() : 0;
-        Integer attempts = 0;
-        ResponseEntity<byte[]> response = null;
+        Integer attempt = 0;
 
-        while (attempts < maxAttempts) {
+        log.debug("Going to proxy request to service: {}", subdomain);
+
+        while (attempt < maxAttempts) {
             try {
-                return getResponseEntity(path, query, body, method, subdomain);
+                return getResponseEntity(request, subdomain, body);
             } catch (RestClientException ex) {
-                log.debug("Attempt {} failed for subdomain {}: {}", attempts + 1, subdomain, ex.getMessage());
-                attempts++;
-                if (attempts == maxAttempts) {
+                log.warn("Attempt {} failed for subdomain {}: {}", attempt + 1, subdomain, ex.getMessage());
+                attempt++;
+                if (attempt == maxAttempts) {
+                    log.error("Max {} attempts reached, cannot reach any host for subdomain '{}'", maxAttempts, subdomain);
                     throw new RuntimeException("Could not reach destination after " + maxAttempts + " attempts", ex);
                 }
             }
@@ -64,24 +63,26 @@ public class ReverseProxyServiceImpl implements ReverseProxyService<byte[]> {
         throw new IllegalStateException("Could not forward request !");
     }
 
-    private ResponseEntity<byte[]> getResponseEntity(String path, String query, byte[] body, String method, String subdomain) {
+    private ResponseEntity<byte[]> getResponseEntity(HttpServletRequest request, String subdomain, byte[] body) throws IOException {
+        String path = request.getRequestURI();
+        String query = request.getQueryString();
         JRoxyConfig.Host targetHost = loadBalancerContext.chooseInstance(subdomain);
+        log.debug("Load balancer have selected the host : {}:{}", targetHost.getAddress(), targetHost.getPort());
 
         String targetUrl = String.format("http://%s:%d%s%s",
                 targetHost.getAddress(),
                 targetHost.getPort(),
                 path,
                 (query != null ? "?" + query : ""));
+        log.debug("Going to call target url: {}", targetUrl);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        HttpEntity<byte[]> requestEntity = new HttpEntity<>(body, headers);
+        HttpHeaders headers = UrlUtils.extractHeaders(request);
+        HttpEntity<byte[]> requestHttpEntity = new HttpEntity<>(body, headers);
 
         ResponseEntity<byte[]> response = restTemplate.exchange(
                 targetUrl,
-                HttpMethod.valueOf(method),
-                requestEntity,
+                HttpMethod.valueOf(request.getMethod()),
+                requestHttpEntity,
                 byte[].class
         );
         return response;
