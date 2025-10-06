@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +19,7 @@ import java.io.IOException;
 public class JRoxyController {
     private final ReverseProxyService<byte[]> reverseProxyService;
     private final ForwardsService forwardsService;
+
     @RequestMapping(
             value = "/**",
             method = {
@@ -30,15 +32,16 @@ public class JRoxyController {
                     RequestMethod.HEAD
             }
     )
-    public ResponseEntity<byte[]> forward(HttpServletRequest request) throws IOException {
+    public ResponseEntity<byte[]> forward(HttpServletRequest request, @RequestBody(required = false) byte[] body) throws IOException {
         String method = request.getMethod();
         log.debug("Proxying {} request to {}", method, request.getRequestURI());
 
         switch (method) {
+            // Handling GET Method separatly in order to perform caching capabilities
             case "GET":
-                return reverseProxyService.forwardGET(request);
+                return reverseProxyService.forwardGET(request, body);
             case "POST", "PATCH", "PUT", "DELETE", "OPTIONS", "HEAD":
-                return forwardsService.forward(request);
+                return forwardsService.forward(request, body);
             default:
                 log.warn("Unsupported method: {}", method);
                 return ResponseEntity.status(405).build();
