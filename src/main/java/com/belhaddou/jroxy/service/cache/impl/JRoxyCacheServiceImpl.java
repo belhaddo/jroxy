@@ -1,6 +1,5 @@
 package com.belhaddou.jroxy.service.cache.impl;
 
-import com.belhaddou.jroxy.configuration.JRoxyConfig;
 import com.belhaddou.jroxy.service.cache.EhCacheService;
 import com.belhaddou.jroxy.service.cache.JRoxyCacheService;
 import com.belhaddou.jroxy.util.UrlUtils;
@@ -20,7 +19,6 @@ import java.time.format.DateTimeFormatter;
 @Slf4j
 public class JRoxyCacheServiceImpl implements JRoxyCacheService {
     private final EhCacheService<CachedResponse> cache;
-    private final JRoxyConfig jRoxyConfig;
 
     public ResponseEntity<byte[]> getCachedResponse(HttpServletRequest request) {
         String key = buildCacheKey(request);
@@ -69,8 +67,7 @@ public class JRoxyCacheServiceImpl implements JRoxyCacheService {
     }
 
     private String buildCacheKey(HttpServletRequest request) {
-        String base = jRoxyConfig.getListen().getAddress();
-        String subdomain = UrlUtils.extractSubdomain(request, base);
+        String subdomain = UrlUtils.extractSubdomain(request);
         return request.getMethod() + ":" + subdomain + ":" + request.getRequestURI();
     }
 

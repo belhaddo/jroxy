@@ -25,11 +25,10 @@ public class ForwardServiceImpl implements ForwardsService {
     private final LoadBalancerContext loadBalancerContext;
     private final RestTemplate restTemplate;
     private final ServiceRegistry serviceRegistry;
-    private final JRoxyConfig jRoxyConfig;
 
     public ResponseEntity<byte[]> forward(HttpServletRequest request, byte[] body) throws IOException {
 
-        String subdomain = UrlUtils.extractSubdomain(request, jRoxyConfig.getListen().getAddress());
+        String subdomain = UrlUtils.extractSubdomain(request);
         log.debug("extracting subdomain from url : {}", subdomain);
 
         if (subdomain.isEmpty()) {

@@ -12,11 +12,10 @@ public class UrlUtils {
     /***
      *
      * @param request
-     * @param baseHost
      * @return subdomain
      */
 
-    public static String extractSubdomain(HttpServletRequest request, String baseHost) {
+    public static String extractSubdomain(HttpServletRequest request) {
         String host = request.getHeader("Host");
         log.debug("extracting host from url : {}", host);
         if (host == null) return "";
