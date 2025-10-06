@@ -20,10 +20,10 @@ public class UrlUtils {
         String host = request.getHeader("Host");
         log.debug("extracting host from url : {}", host);
         if (host == null) return "";
-        // select only host part without port
-        String cleanHost = host.split(":")[0];
-        if (cleanHost.contains("." + baseHost)) {
-            return cleanHost.substring(0, cleanHost.indexOf("." + baseHost));
+        String fullDomain = host.split(":")[0];
+        String[] parts = fullDomain.split("\\.");
+        if (parts.length >= 3) {
+            return parts[0];
         }
         return "";
     }

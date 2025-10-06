@@ -28,9 +28,7 @@ public class ForwardServiceImpl implements ForwardsService {
     private final JRoxyConfig jRoxyConfig;
 
     public ResponseEntity<byte[]> forward(HttpServletRequest request, byte[] body) throws IOException {
-        // get host
 
-        // extract the subdomain
         String subdomain = UrlUtils.extractSubdomain(request, jRoxyConfig.getListen().getAddress());
         log.debug("extracting subdomain from url : {}", subdomain);
 
