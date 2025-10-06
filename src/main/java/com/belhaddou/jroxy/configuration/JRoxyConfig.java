@@ -18,6 +18,7 @@ import java.util.List;
 @Builder
 public class JRoxyConfig {
 
+    private String retries;
     private String defaultLoadBalancing;
     private Listen listen;
     @Builder.Default

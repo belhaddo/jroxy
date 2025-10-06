@@ -4,5 +4,4 @@ import com.belhaddou.jroxy.configuration.JRoxyConfig;
 
 public interface LoadBalancerContext {
     JRoxyConfig.Host chooseInstance(String name);
-
 }

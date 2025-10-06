@@ -24,14 +24,17 @@ public class GetProxyServiceImpl implements ReverseProxyService<byte[]> {
         long start = System.nanoTime();
         ResponseEntity<byte[]> cached = cacheService.getCachedResponse(request);
         if (cached != null) {
-            log.debug("⏱️ Cache Hit: Execution time of GET is {} ms", (System.nanoTime() - start) / 1_000_000);
+            log.debug("Cache Hit: Execution time of GET is {} ms", (System.nanoTime() - start) / 1_000_000);
             return cached;
         }
 
         ResponseEntity<byte[]> response = forwardsService.forward(request, body);
-        cacheService.putResponse(request, response);
 
-        log.debug("⏱️ Cache Miss: Execution time of GET is {} ms", (System.nanoTime() - start) / 1_000_000);
+        if (response != null) {
+            cacheService.putResponse(request, response);
+        }
+
+        log.debug("Cache Miss: Execution time of GET is {} ms", (System.nanoTime() - start) / 1_000_000);
         return response;
     }
 

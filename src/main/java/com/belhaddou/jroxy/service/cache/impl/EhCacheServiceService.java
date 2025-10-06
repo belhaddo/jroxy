@@ -20,7 +20,6 @@ public class EhCacheServiceService<Object> implements com.belhaddou.jroxy.servic
     @Override
     public void put(String key, Object value) {
         cache.put(key, value);
-
     }
 
     @Override
