@@ -35,11 +35,14 @@ public class UrlUtils {
     public static HttpHeaders extractHeaders(HttpServletRequest request) {
         HttpHeaders headers = new HttpHeaders();
         Enumeration<String> headerNames = request.getHeaderNames();
-        while (headerNames.hasMoreElements()) {
-            String name = headerNames.nextElement();
-            Enumeration<String> values = request.getHeaders(name);
-            headers.put(name, Collections.list(values));
+        if (headerNames != null) {
+            while (headerNames.hasMoreElements()) {
+                String name = headerNames.nextElement();
+                Enumeration<String> values = request.getHeaders(name);
+                headers.put(name, Collections.list(values));
+            }
         }
+
         return headers;
     }
 }

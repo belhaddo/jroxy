@@ -17,6 +17,7 @@ import java.time.format.DateTimeFormatter;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+// This service contains caching logic of the reverse-proxy
 public class JRoxyCacheServiceImpl implements JRoxyCacheService {
     private final EhCacheService<CachedResponse> cache;
 
@@ -26,7 +27,7 @@ public class JRoxyCacheServiceImpl implements JRoxyCacheService {
         CachedResponse cached = cache.get(key);
 
         if (cached == null) return null;
-
+        // check if the cached entity is expired then it should be evicted from the cache
         if (isExpired(cached)) {
             log.debug("Evicting cache for key {}", key);
             cache.evict(key);

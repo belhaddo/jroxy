@@ -19,34 +19,39 @@ import java.util.Map;
 public class LoadBalancerContextImpl implements LoadBalancerContext {
 
     private final JRoxyConfig jRoxyConfig;
+    // This map is built by Spring boot at runtime to load all Load balancing strategies and its implementation
     private final Map<String, LoadBalancerStrategy> strategyMap;
     private final ServiceRegistry serviceRegistry;
 
+    // Retrieving Hosts for the specific subdomain
     public JRoxyConfig.Host chooseInstance(String subdomain) {
         List<InstanceWithHealth> instanceWithHealth = serviceRegistry.getRegistry()
                 .get(subdomain);
-
-        JRoxyConfig.Services service = jRoxyConfig.getServices()
-                .stream().filter(s -> subdomain.equals(s.getName()))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("subdomain : " + subdomain + " is not part of the configuration !"));
-
+        // Filtering the Instances which are UP
         List<JRoxyConfig.Host> hosts = instanceWithHealth.stream()
                 .filter(instance -> instance.getHealthy() == true)
                 .map(InstanceWithHealth::getHost)
                 .toList();
+
+        // Getting Service Configuration to get Load balancing strategy
+        JRoxyConfig.Services service = jRoxyConfig.getServices()
+                .stream().filter(s -> subdomain.equals(s.getName()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("subdomain : " + subdomain + " is not part of the configuration !"));
         log.debug("Load balancer found {} number of host are available for service {}", hosts.size(), service.getName());
 
+        // Checking if the default or service specific load balancing strategy will be used
         String strategy = service.getLoadBalancer() == null ? jRoxyConfig.getDefaultLoadBalancing()
                 : service.getLoadBalancer();
         log.debug("Going to use Load balancing strategy : {}", strategy);
 
+        // Retrieving the load balancing strategy implementation
         LoadBalancerStrategy selectedStrategy = strategyMap.get(strategy);
-
+        // If the strategy is not found an exception is raised
         if (selectedStrategy == null) {
             throw new JRoxyIllegalArgumentException("Strategy " + strategy + "is not yet supported !");
         }
-
+        // Select the Host
         return selectedStrategy.select(hosts);
     }
 

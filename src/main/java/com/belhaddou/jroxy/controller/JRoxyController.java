@@ -18,6 +18,7 @@ import java.io.IOException;
 public class JRoxyController {
     private final ForwardsService forwardsService;
 
+    // Ideally each method should be in separate controller class
     @RequestMapping(
             value = "/**",
             method = {

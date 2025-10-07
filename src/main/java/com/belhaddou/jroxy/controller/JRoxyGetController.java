@@ -19,7 +19,6 @@ public class JRoxyGetController {
 
     private final ReverseProxyService<byte[]> proxyGetService;
 
-    // Get controller Separated because it has caching capability
     @RequestMapping(
             value = "/**",
             method = RequestMethod.GET
