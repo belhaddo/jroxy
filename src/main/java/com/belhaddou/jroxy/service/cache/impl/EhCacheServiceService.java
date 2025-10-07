@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+// Service to interact with Ehcache
 public class EhCacheServiceService<Object> implements com.belhaddou.jroxy.service.cache.EhCacheService<Object> {
 
     @Qualifier("ehCache")
