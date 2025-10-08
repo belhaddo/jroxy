@@ -1,13 +1,13 @@
 # JRoxy
 
-_A Java Reverse Proxy with Caching and Load Balancing._
+**JRoxy** is a **Java-based reverse proxy** that routes HTTP traffic to downstream services.  
+It supports **service discovery**, **load balancing**, and **response caching**, all managed through a simple **YAML configuration file**.
 
-In this repository there is the source code of Jroxy and also helm chart to deploy it (helm/jroxy), for demo purpose another client application chart is included to test traffic (helm/client).
-## Overview
+The repository includes:
 
-**JRoxy** is a Java-based reverse proxy designed to route HTTP traffic efficiently to downstream services. It provides
-built-in service discovery, load balancing, and caching capabilities configured through a simple YAML file.
-
+- **JRoxy source code** — core proxy and supporting services
+- **Helm chart** — `helm/jroxy` for deployment
+- **Demo client Helm chart** — `helm/client` to simulate traffic for testing
 ---
 
 ## Core Features
@@ -34,7 +34,8 @@ When a request is received:
 ---
 
 ### 3. Caching
-EhCache is used as in-memory cache in this application, it can be easily switched to another caching tool like redis by creating a new implementation to the interface `EhCacheService` and configuration. 
+JRoxy uses **EhCache** as an in-memory caching layer.  
+You can easily plug in another caching system (like Redis) by implementing the `EhCacheService` interface and updating configuration.
 - **GET requests** are cached:
     - A unique cache key is built from the request.
     - If a valid cached response exists, it’s returned immediately.
@@ -63,7 +64,7 @@ JRoxy supports multiple load-balancing strategies:
 - **Random Strategy** (default)
 - **Round Robin Strategy**
 
-Custom strategies can be implemented by extending the `LoadBalancerStrategy` interface.
+Custom strategies can be implemented by implementing the `LoadBalancerStrategy` interface.
 
 **Configuration Options:**
 
