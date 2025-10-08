@@ -13,30 +13,36 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-// This service contains caching logic of the reverse-proxy
+// AI Generated : methods implementation logic
 public class JRoxyCacheServiceImpl implements JRoxyCacheService {
+
     private final EhCacheService<CachedResponse> cache;
 
+    @Override
     public ResponseEntity<byte[]> getCachedResponse(HttpServletRequest request) {
         String key = buildCacheKey(request);
         log.debug("Getting cached response from cache with key {}", key);
         CachedResponse cached = cache.get(key);
 
         if (cached == null) return null;
-        // check if the cached entity is expired then it should be evicted from the cache
+
+        // Check expiry based on TTL
         if (isExpired(cached)) {
-            log.debug("Evicting cache for key {}", key);
+            log.debug("Evicting expired cache for key {}", key);
             cache.evict(key);
             return null;
         }
 
+        // Optionally, honor must-revalidate or stale directives
         return cached.toResponseEntity();
     }
 
+    @Override
     public void putResponse(HttpServletRequest request, ResponseEntity<byte[]> response) {
         if (!shouldCache(response)) {
             return;
@@ -44,17 +50,18 @@ public class JRoxyCacheServiceImpl implements JRoxyCacheService {
 
         String key = buildCacheKey(request);
         log.debug("Putting response to cache with key {}", key);
+
         long ttl = computeTtlFromHeaders(response.getHeaders());
         CachedResponse cached = new CachedResponse(response, ttl);
         cache.put(key, cached);
     }
 
     private boolean shouldCache(ResponseEntity<byte[]> response) {
-        // Only cache successful GET responses
-        if (!response.getStatusCode().is2xxSuccessful()) return false;
+        if (!response.getStatusCode().is2xxSuccessful()) return false; // only successful GET responses
 
         String cacheControl = response.getHeaders().getCacheControl();
         if (cacheControl != null) {
+            cacheControl = cacheControl.toLowerCase();
             if (cacheControl.contains("no-store")) return false;
             return !cacheControl.contains("private");
         }
@@ -72,41 +79,58 @@ public class JRoxyCacheServiceImpl implements JRoxyCacheService {
         return request.getMethod() + ":" + subdomain + ":" + request.getRequestURI();
     }
 
-
-    //AI Generated
     private long computeTtlFromHeaders(HttpHeaders headers) {
-        // Priority order:
-        // 1. Cache-Control: max-age
-        // 2. Expires header
-        String cacheControl = headers.getCacheControl();
-        if (cacheControl != null && cacheControl.contains("max-age")) {
-            try {
-                String[] parts = cacheControl.split("=");
-                if (parts.length == 2) {
-                    long seconds = Long.parseLong(parts[1].trim());
-                    return seconds;
+        String cacheControl = Optional.ofNullable(headers.getCacheControl()).orElse("").toLowerCase();
+
+        // no-store or private should never cache
+        if (cacheControl.contains("no-store") || cacheControl.contains("private")) {
+            return 0;
+        }
+
+        // Immutable content can be cached for a long time (e.g., 1 year)
+        if (cacheControl.contains("immutable")) {
+            return 365 * 24 * 3600L;
+        }
+
+        // Try s-maxage (shared cache) first, then max-age
+        long ttl = parseCacheControlMaxAge(cacheControl, "s-maxage");
+        if (ttl == -1) ttl = parseCacheControlMaxAge(cacheControl, "max-age");
+
+        // Fallback to Expires header if no max-age
+        if (ttl == -1) {
+            String expires = headers.getFirst(HttpHeaders.EXPIRES);
+            if (expires != null) {
+                try {
+                    Instant expiryInstant = ZonedDateTime.parse(expires, DateTimeFormatter.RFC_1123_DATE_TIME).toInstant();
+                    ttl = Math.max(expiryInstant.getEpochSecond() - Instant.now().getEpochSecond(), 0);
+                } catch (Exception e) {
+                    ttl = -1;
                 }
-            } catch (NumberFormatException ignored) {
             }
         }
 
-        String expires = headers.getFirst(HttpHeaders.EXPIRES);
-        if (expires != null) {
-            try {
-                Instant expiryInstant = ZonedDateTime.parse(expires, DateTimeFormatter.RFC_1123_DATE_TIME).toInstant();
-                long diff = expiryInstant.getEpochSecond() - Instant.now().getEpochSecond();
-                return Math.max(diff, 0);
-            } catch (Exception ignored) {
-            }
-        }
+        // Default TTL if no cache headers provided
+        if (ttl <= 0) ttl = 60; // 1 minute default
 
-        // Default TTL if no cache headers specified
-        return 60; // 1 minute
+        return ttl;
     }
 
-    // AI Generated
+    private long parseCacheControlMaxAge(String cacheControl, String directive) {
+        try {
+            String[] directives = cacheControl.split(",");
+            for (String dir : directives) {
+                dir = dir.trim();
+                if (dir.startsWith(directive + "=")) {
+                    return Long.parseLong(dir.substring(directive.length() + 1).trim());
+                }
+            }
+        } catch (NumberFormatException ignored) {
+        }
+        return -1;
+    }
+
     // --- Inner Model Class ---
-    private static class CachedResponse {
+    static class CachedResponse {
         private final byte[] body;
         private final HttpHeaders headers;
         private final int statusCode;
@@ -116,7 +140,7 @@ public class JRoxyCacheServiceImpl implements JRoxyCacheService {
             this.body = response.getBody();
             this.headers = response.getHeaders();
             this.statusCode = response.getStatusCodeValue();
-            this.expiryTime = ttlSeconds > 0 ? Instant.now().plusSeconds(ttlSeconds) : null;
+            this.expiryTime = Instant.ofEpochMilli(response.getHeaders().getExpires());
         }
 
         Instant getExpiryTime() {
@@ -128,5 +152,3 @@ public class JRoxyCacheServiceImpl implements JRoxyCacheService {
         }
     }
 }
-
-
