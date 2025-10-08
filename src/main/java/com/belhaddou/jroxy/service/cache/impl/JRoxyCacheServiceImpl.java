@@ -140,7 +140,7 @@ public class JRoxyCacheServiceImpl implements JRoxyCacheService {
             this.body = response.getBody();
             this.headers = response.getHeaders();
             this.statusCode = response.getStatusCodeValue();
-            this.expiryTime = Instant.ofEpochMilli(response.getHeaders().getExpires());
+            this.expiryTime = ttlSeconds > 0 ? Instant.now().plusSeconds(ttlSeconds) : null;
         }
 
         Instant getExpiryTime() {
