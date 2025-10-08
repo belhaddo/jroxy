@@ -108,7 +108,8 @@ Custom strategies can be implemented by extending the `LoadBalancerStrategy` int
 
 ---
 ## Application architecture
-![img.png](img.png)
+
+![img.png](https://github.com/belhaddo/jroxy/wiki/Jroxy-Application-Architecture)
 
 ## Setup Instructions
 
