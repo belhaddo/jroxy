@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "jroxy.fullname" . }}-jroxy
+  labels:
+    app: jroxy{{- include "jroxy.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.jroxy.replicas }}
+  selector:
+    matchLabels:
+      app: jroxy
+    {{- include "jroxy.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: jroxy
+      {{- include "jroxy.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: {{ quote .Values.jroxy.jroxy.env.springProfilesActive }}
+            - name: KUBERNETES_CLUSTER_DOMAIN
+              value: {{ quote .Values.kubernetesClusterDomain }}
+          image: {{ .Values.jroxy.jroxy.image.repository }}:{{ .Values.jroxy.jroxy.image.tag | default .Chart.AppVersion }}
+          name: jroxy
+          ports:
+            - containerPort: 8080
+          resources: {}
+          volumeMounts:
+            - mountPath: /app/config
+              name: configmap
+              readOnly: true
+      volumes:
+        - configMap:
+            name: {{ include "jroxy.fullname" . }}-prod-config
+          name: configmap

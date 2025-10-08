@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "jroxy-clients.fullname" . }}-1
+  labels:
+    app: client1
+  {{- include "jroxy-clients.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.client1.replicas }}
+  selector:
+    matchLabels:
+      app: client1
+    {{- include "jroxy-clients.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: client1
+      {{- include "jroxy-clients.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - env:
+            - name: APP_NAME
+              value: {{ quote .Values.client1.client1.env.appName }}
+            - name: KUBERNETES_CLUSTER_DOMAIN
+              value: {{ quote .Values.kubernetesClusterDomain }}
+          image: {{ .Values.client1.client1.image.repository }}:{{ .Values.client1.client1.image.tag
+                   | default .Chart.AppVersion }}
+          name: client-1
+          ports:
+            - containerPort: 8081
+          resources: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "jroxy-clients.fullname" . }}-2
+  labels:
+    app: client2
+  {{- include "jroxy-clients.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.client2.replicas }}
+  selector:
+    matchLabels:
+      app: client2
+    {{- include "jroxy-clients.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: client2
+      {{- include "jroxy-clients.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - env:
+            - name: APP_NAME
+              value: {{ quote .Values.client2.client2.env.appName }}
+            - name: KUBERNETES_CLUSTER_DOMAIN
+              value: {{ quote .Values.kubernetesClusterDomain }}
+          image: {{ .Values.client2.client2.image.repository }}:{{ .Values.client2.client2.image.tag
+                   | default .Chart.AppVersion }}
+          name: client2
+          ports:
+            - containerPort: 8081
+          resources: {}

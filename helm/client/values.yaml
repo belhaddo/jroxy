@@ -1,0 +1,27 @@
+"client1":
+  client1:
+    env:
+      appName: client-1
+    image:
+      repository: badelh070/downstream
+      tag: latest
+  ports:
+    - port: 9090
+      protocol: TCP
+      targetPort: 8081
+  replicas: 1
+  type: ClusterIP
+"client2":
+  client2:
+    env:
+      appName: client-2
+    image:
+      repository: badelh070/downstream
+      tag: latest
+  ports:
+    - port: 9090
+      protocol: TCP
+      targetPort: 8081
+  replicas: 1
+  type: ClusterIP
+kubernetesClusterDomain: cluster.local

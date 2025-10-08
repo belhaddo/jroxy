@@ -24,6 +24,16 @@ public class JRoxyConfig {
     @Builder.Default
     private List<Services> services = new ArrayList<>();
 
+    @Override
+    public String toString() {
+        return "JRoxyConfig{" +
+                "retries='" + retries + '\'' +
+                ", defaultLoadBalancing='" + defaultLoadBalancing + '\'' +
+                ", listen=" + listen.getAddress() + ":" + listen.getPort() + '\'' +
+                ", services=" + services +
+                '}';
+    }
+
     @Data
     public static class DefaultLoadBalancing {
         private String strategy;
