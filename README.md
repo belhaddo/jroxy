@@ -1,7 +1,8 @@
 # JRoxy
 
-_A Java Reverse Proxy with Caching and Load Balancing_
+_A Java Reverse Proxy with Caching and Load Balancing._
 
+In this repository there is the source code of Jroxy and also helm chart to deploy it (helm/jroxy), for demo purpose another client application chart is included to test traffic (helm/client).
 ## Overview
 
 **JRoxy** is a Java-based reverse proxy designed to route HTTP traffic efficiently to downstream services. It provides
