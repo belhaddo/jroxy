@@ -4,7 +4,7 @@ _A Java Reverse Proxy with Caching and Load Balancing_
 
 ## Overview
 
-**JRoxy** is a Java-based reverse proxy designed to route HTTP traffic efficiently to upstream services. It provides
+**JRoxy** is a Java-based reverse proxy designed to route HTTP traffic efficiently to downstream services. It provides
 built-in service discovery, load balancing, and caching capabilities configured through a simple YAML file.
 
 ---
@@ -16,7 +16,7 @@ built-in service discovery, load balancing, and caching capabilities configured 
 Upon startup, JRoxy:
 
 - Reads the YAML configuration file.
-- Registers all upstream services and their instances (host and port) into a **Service Registry**.
+- Registers all downstream services and their instances (host and port) into a **Service Registry**.
 - Makes the registry accessible to other components such as the **LoadBalancer** and **Forwarding Service**.
 
 ---
@@ -25,7 +25,7 @@ Upon startup, JRoxy:
 
 When a request is received:
 
-1. JRoxy determines the target upstream service using the `Host` header.
+1. JRoxy determines the target downstream service using the `Host` header.
 2. It queries the **Service Registry** for available instances of that service.
 3. The **LoadBalancer** selects an instance based on the configured load-balancing strategy.
 4. The request is then proxied to the selected instance.
@@ -33,12 +33,12 @@ When a request is received:
 ---
 
 ### 3. Caching
-
+EhCache is used as in-memory cache in this application, it can be easily switched to another caching tool like redis by creating a new implementation to the interface `EhCacheService` and configuration. 
 - **GET requests** are cached:
     - A unique cache key is built from the request.
     - If a valid cached response exists, it’s returned immediately.
-    - Otherwise, the request is forwarded upstream, and the response is cached for future use.
-- **Non-GET requests** (e.g., POST, PUT, DELETE) bypass the cache and are sent directly to the upstream service.
+    - Otherwise, the request is forwarded downstream, and the response is cached for future use.
+- **Non-GET requests** (e.g., POST, PUT, DELETE) bypass the cache and are sent directly to the downstream service.
 
 Caching behavior is inspired
 by [Cloudflare’s Cache-Control guide](https://www.cloudflare.com/en-gb/learning/cdn/glossary/what-is-cache-control/).
@@ -99,7 +99,7 @@ Custom strategies can be implemented by extending the `LoadBalancerStrategy` int
   Integrate external caches (Redis) for consistent caching across proxy instances and resilience during downtime.
 
 - **Health Checks**  
-  Implement periodic and startup-time health checks for upstream instances to dynamically update their availability in
+  Implement periodic and startup-time health checks for downstream instances to dynamically update their availability in
   the Service Registry.
 - **Chain of Responsibility**
 
@@ -107,6 +107,8 @@ Custom strategies can be implemented by extending the `LoadBalancerStrategy` int
   filtering
 
 ---
+## Application architecture
+![img.png](img.png)
 
 ## Setup Instructions
 
@@ -135,6 +137,7 @@ Custom strategies can be implemented by extending the `LoadBalancerStrategy` int
       helm install client ./client
       ```
 5. Open a tunnel from the local environment to k8s cluster
+ref: https://minikube.sigs.k8s.io/docs/handbook/accessing/
     - **macOS:**
       ```bash
       minikube service jroxy-service --url # result example: http://127.0.0.1:64060
@@ -146,3 +149,5 @@ Custom strategies can be implemented by extending the `LoadBalancerStrategy` int
 ## References
 
 - Cloudflare: [What is Cache-Control?](https://www.cloudflare.com/en-gb/learning/cdn/glossary/what-is-cache-control/)
+- Minikube: [Accessing apps
+  ](https://minikube.sigs.k8s.io/docs/handbook/accessing/) 
