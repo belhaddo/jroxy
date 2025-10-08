@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "jroxy.fullname" . }}-ingress
+  labels:
+  {{- include "jroxy.labels" . | nindent 4 }}
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: my-service.my-company.com.com
+      http:
+        paths:
+          - backend:
+              service:
+                name: '{{ include "jroxy.fullname" . }}-service'
+                port:
+                  number: 30251
+            path: /
+            pathType: Prefix
+

@@ -34,7 +34,7 @@ class LoadBalancerContextImplTest {
     @InjectMocks
     private LoadBalancerContextImpl loadBalancerContext;
 
-    private Map<String, LoadBalancerStrategy> strategyMap = new HashMap<>();
+    private final Map<String, LoadBalancerStrategy> strategyMap = new HashMap<>();
 
     @BeforeEach
     void setUp() {
