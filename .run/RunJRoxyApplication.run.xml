@@ -2,7 +2,7 @@
     <configuration default="false" name="RunJRoxyApplication" type="Application" factoryName="Application">
         <option name="MAIN_CLASS_NAME" value="com.belhaddou.jroxy.JRoxyApplication"/>
         <module name="jproxy"/>
-        <option name="VM_PARAMETERS" value="-Dspring.profiles.active=prod"/>
+        <option name="VM_PARAMETERS" value="-Dspring.profiles.active=local"/>
         <extension name="coverage">
             <pattern>
                 <option name="PATTERN" value="com.belhaddou.jroxy.*"/>

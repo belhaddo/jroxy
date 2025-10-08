@@ -27,6 +27,10 @@ public class LoadBalancerContextImpl implements LoadBalancerContext {
     public JRoxyConfig.Host chooseInstance(String subdomain) {
         List<InstanceWithHealth> instanceWithHealth = serviceRegistry.getRegistry()
                 .get(subdomain);
+        //Making sure that instances are present
+        if (instanceWithHealth == null) {
+            throw new IllegalArgumentException("Could not load from registry instances for service : " + subdomain);
+        }
         // Filtering the Instances which are UP
         List<JRoxyConfig.Host> hosts = instanceWithHealth.stream()
                 .filter(instance -> instance.getHealthy() == true)

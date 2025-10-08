@@ -1,0 +1,34 @@
+jroxy:
+  jroxy:
+    env:
+      springProfilesActive: dev
+    image:
+      repository: badelh070/jroxy
+      tag: 1.0.0
+  replicas: 1
+kubernetesClusterDomain: cluster.local
+prodConfig:
+  applicationDevYaml: |-
+    logging:
+      level:
+        root: DEBUG
+    proxy:
+      default-load-balancing: "randomStrategy"
+      listen:
+        address: "127.0.0.1"
+        port: 8080
+      services:
+        - name: my-service
+          domain: my-service.my-company.com
+          load-balancer: "roundRobinStrategy"
+          hosts:
+            - address: "client1-service"
+              port: 9090
+            - address: "client2-service"
+              port: 9090
+service:
+  ports:
+    - port: 30251
+      protocol: TCP
+      targetPort: 8080
+  type: NodePort

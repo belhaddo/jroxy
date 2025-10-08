@@ -113,15 +113,33 @@ Custom strategies can be implemented by extending the `LoadBalancerStrategy` int
 1. Add DNS mappings to `/etc/hosts`:
    ```
    127.0.0.1 my-service.my-company.com
-   127.0.0.1 my-service-a.my-company.com
    ```
 2. Refresh DNS:
     - **macOS:**
       ```bash
       sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder
       ```
-
-3.
+3. Minikube setup and setting up ingress controller
+    - **macOS:**
+      ```bash
+      minikube start
+      minikube addons enable ingress
+      minikube addons enable ingress-dns
+      ```
+4. Install the applications
+    - **macOS:**
+      ```bash
+      git clone git@github.com:belhaddo/jroxy.git
+      cd cd jroxy/helm/
+      helm install jroxy ./jroxy
+      helm install client ./client
+      ```
+5. Open a tunnel from the local environment to k8s cluster
+    - **macOS:**
+      ```bash
+      minikube service jroxy --url # result example: http://127.0.0.1:64060
+      ```
+6. Start making requests to : http://my-service.my-company.com:64060/ with minukube opened port.
 
 ---
 

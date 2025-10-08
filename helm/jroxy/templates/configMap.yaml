@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "jroxy.fullname" . }}-prod-config
+  labels:
+  {{- include "jroxy.labels" . | nindent 4 }}
+data:
+  application-dev.yaml: {{ .Values.prodConfig.applicationDevYaml | toYaml | indent 1 }}

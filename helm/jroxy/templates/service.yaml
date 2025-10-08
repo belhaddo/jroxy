@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "jroxy.fullname" . }}-service
+  labels:
+    app: jroxy
+  {{- include "jroxy.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    app: jroxy
+    {{- include "jroxy.selectorLabels" . | nindent 4 }}
+  ports:
+  {{- .Values.service.ports | toYaml | nindent 2 }}
