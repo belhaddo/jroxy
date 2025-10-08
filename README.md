@@ -135,7 +135,7 @@ Custom strategies can be implemented by implementing the `LoadBalancerStrategy` 
     - **macOS:**
       ```bash
       git clone git@github.com:belhaddo/jroxy.git
-      cd cd jroxy/helm/
+      cd jroxy/helm/
       helm install jroxy ./jroxy
       helm install client ./client
       ```
