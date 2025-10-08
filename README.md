@@ -137,7 +137,7 @@ Custom strategies can be implemented by extending the `LoadBalancerStrategy` int
 5. Open a tunnel from the local environment to k8s cluster
     - **macOS:**
       ```bash
-      minikube service jroxy --url # result example: http://127.0.0.1:64060
+      minikube service jroxy-service --url # result example: http://127.0.0.1:64060
       ```
 6. Start making requests to : http://my-service.my-company.com:64060/ with minukube opened port.
 
