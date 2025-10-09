@@ -1,6 +1,6 @@
 package com.belhaddou.jroxy.controller;
 
-import com.belhaddou.jroxy.service.proxy.ReverseProxyService;
+import com.belhaddou.jroxy.service.proxy.ForwardGetService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,7 @@ import java.io.IOException;
 @Slf4j
 public class JRoxyGetController {
 
-    private final ReverseProxyService<byte[]> proxyGetService;
+    private final ForwardGetService<byte[]> proxyGetService;
 
     @RequestMapping(
             value = "/**",

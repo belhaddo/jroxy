@@ -1,8 +1,8 @@
 package com.belhaddou.jroxy.service.proxy.impl;
 
 import com.belhaddou.jroxy.service.cache.JRoxyCacheService;
+import com.belhaddou.jroxy.service.proxy.ForwardGetService;
 import com.belhaddou.jroxy.service.proxy.ForwardsService;
-import com.belhaddou.jroxy.service.proxy.ReverseProxyService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +14,7 @@ import java.io.IOException;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class GetProxyServiceImpl implements ReverseProxyService<byte[]> {
+public class GetProxyServiceImpl implements ForwardGetService<byte[]> {
 
     private final ForwardsService forwardsService;
     private final JRoxyCacheService cacheService;

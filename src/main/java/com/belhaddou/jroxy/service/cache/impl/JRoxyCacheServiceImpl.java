@@ -18,7 +18,6 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-// AI Generated : methods implementation logic
 public class JRoxyCacheServiceImpl implements JRoxyCacheService {
 
     private final EhCacheService<CachedResponse> cache;
@@ -30,6 +29,7 @@ public class JRoxyCacheServiceImpl implements JRoxyCacheService {
         CachedResponse cached = cache.get(key);
 
         if (cached == null) return null;
+        //TODO: Implement ETAG and LastModified for revalidation
 
         // Check expiry based on TTL
         if (isExpired(cached)) {
@@ -38,7 +38,6 @@ public class JRoxyCacheServiceImpl implements JRoxyCacheService {
             return null;
         }
 
-        // Optionally, honor must-revalidate or stale directives
         return cached.toResponseEntity();
     }
 
@@ -108,9 +107,6 @@ public class JRoxyCacheServiceImpl implements JRoxyCacheService {
                 }
             }
         }
-
-        // Default TTL if no cache headers provided
-        if (ttl <= 0) ttl = 60; // 1 minute default
 
         return ttl;
     }

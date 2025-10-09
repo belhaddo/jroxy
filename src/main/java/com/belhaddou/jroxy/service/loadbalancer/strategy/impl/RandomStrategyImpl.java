@@ -17,7 +17,6 @@ public class RandomStrategyImpl implements LoadBalancerStrategy {
         this.random = new Random();
     }
 
-    //AI Generated
     @Override
     public JRoxyConfig.Host select(List<JRoxyConfig.Host> instances) {
         return instances.get(random.nextInt(instances.size()));

@@ -16,8 +16,8 @@ import java.time.Instant;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-// AI Generated :
 class JRoxyCacheServiceImplTest {
+
     private EhCacheService<JRoxyCacheServiceImpl.CachedResponse> cache;
     private JRoxyCacheServiceImpl service;
     private HttpServletRequest request;
@@ -34,7 +34,6 @@ class JRoxyCacheServiceImplTest {
 
     @Test
     void testPutAndGetCachedResponse() {
-        // Mock URL Utils
         try (MockedStatic<UrlUtils> utilsMock = mockStatic(UrlUtils.class)) {
             utilsMock.when(() -> UrlUtils.extractSubdomain(request)).thenReturn("sub");
 

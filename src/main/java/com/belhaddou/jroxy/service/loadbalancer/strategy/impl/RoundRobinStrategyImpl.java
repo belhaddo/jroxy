@@ -17,7 +17,6 @@ public class RoundRobinStrategyImpl implements LoadBalancerStrategy {
         this.counter = new AtomicInteger(0);
     }
 
-    //AI Generated
     @Override
     public JRoxyConfig.Host select(List<JRoxyConfig.Host> instances) {
         int index = Math.abs(counter.getAndIncrement() % instances.size());

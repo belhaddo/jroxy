@@ -23,8 +23,8 @@ public class LoadBalancerContextImpl implements LoadBalancerContext {
     private final Map<String, LoadBalancerStrategy> strategyMap;
     private final ServiceRegistry serviceRegistry;
 
-    // Retrieving Hosts for the specific subdomain
     public JRoxyConfig.Host chooseInstance(String subdomain) {
+        // Retrieving Hosts for the specific subdomain
         List<InstanceWithHealth> instanceWithHealth = serviceRegistry.getRegistry()
                 .get(subdomain);
         //Making sure that instances are present

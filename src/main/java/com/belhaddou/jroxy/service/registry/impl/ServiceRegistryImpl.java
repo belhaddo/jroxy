@@ -26,7 +26,6 @@ public class ServiceRegistryImpl implements ServiceRegistry {
 
     @PostConstruct
     public void registerServices() {
-        log.info("From config: {}", jRoxyConfig);
         List<JRoxyConfig.Services> services = jRoxyConfig.getServices();
         services.forEach(service -> {
             //TODO: add logic to verify if the instance is healthy, considering it true for the MVP
