@@ -42,6 +42,7 @@ You can easily plug in another caching system (like Redis) by implementing the `
 - **GET requests** are cached:
     - A unique cache key is built from the request.
     - If a valid cached response exists, it’s returned immediately.
+    - If a cached response is found but determined to be expired according to its HTTP cache-control headers, it is invalidated and removed from the cache.
     - Otherwise, the request is forwarded downstream, and the response is cached for future use.
 - **Non-GET requests** (e.g., POST, PUT, DELETE) bypass the cache and are sent directly to the downstream service.
 
@@ -88,12 +89,33 @@ Custom strategies can be implemented by implementing the `LoadBalancerStrategy` 
         load-balancer: "roundRobinStrategy" # Overrides global default
         hosts:
           - address: "127.0.0.1"
-            port: 8081
+            port: 9090
           - address: "127.0.0.1"
-            port: 8082
+            port: 9091
   ```
 
 ---
+
+# Testing & Code Coverage
+
+JRoxy is thoroughly validated through a combination of **unit** and **integration tests** to ensure correctness, stability, and maintainability.
+
+Tests focus on isolated components such as:
+- **Load balancer strategies** (random and round-robin)
+- **Service registry and configuration loading**
+- **Caching logic and cache-control compliance**
+
+Total tests raise the overall project coverage to:
+
+| Metric | Coverage |
+|--------|-----------|
+| **Instructions** | **90% (831 / 917 covered)** |
+| **Branches** | **78% (52 / 66 covered)** |
+| **Lines** | **89% (191 / 212 covered)** |
+| **Methods** | **91% (51 / 56 covered)** |
+| **Classes** | **100% (18 / 18 covered)** |
+
+> 📊 Coverage report generated with **JaCoCo 0.8.12**
 
 ## Future Improvements
 
