@@ -8,7 +8,7 @@
   ports:
     - port: 9090
       protocol: TCP
-      targetPort: 8081
+      targetPort: 9090
   replicas: 1
   type: ClusterIP
 "client2":
@@ -21,7 +21,7 @@
   ports:
     - port: 9090
       protocol: TCP
-      targetPort: 8081
+      targetPort: 9090
   replicas: 1
   type: ClusterIP
 kubernetesClusterDomain: cluster.local
