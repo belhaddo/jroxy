@@ -42,6 +42,7 @@ You can easily plug in another caching system (like Redis) by implementing the `
 - **GET requests** are cached:
     - A unique cache key is built from the request.
     - If a valid cached response exists, it’s returned immediately.
+    - If a cached response is found but determined to be expired according to its HTTP cache-control headers, it is invalidated and removed from the cache.
     - Otherwise, the request is forwarded downstream, and the response is cached for future use.
 - **Non-GET requests** (e.g., POST, PUT, DELETE) bypass the cache and are sent directly to the downstream service.
 
@@ -88,33 +89,35 @@ Custom strategies can be implemented by implementing the `LoadBalancerStrategy` 
         load-balancer: "roundRobinStrategy" # Overrides global default
         hosts:
           - address: "127.0.0.1"
-            port: 8081
+            port: 9090
           - address: "127.0.0.1"
-            port: 8082
+            port: 9091
   ```
 
 ---
 
-## Future Improvements
+# Testing & Code Coverage
 
-- **Throttling & Rate Limiting**  
-  - Prevent overload and protect against DoS attacks. (Token bucket, fixed window) algorithms
+JRoxy is thoroughly validated through a combination of **unit** and **integration tests** to ensure correctness, stability, and maintainability.
 
-- **Enhance Caching** 
+Tests focus on isolated components such as:
+- **Load balancer strategies** (random and round-robin)
+- **Service registry and configuration loading**
+- **Caching logic and cache-control compliance**
 
-  - Support ETAG and LastModified Headers for cached content revalidation after expiry.
+Total tests raise the overall project coverage to:
 
-  - Integrate external caches (Redis) for consistent caching across proxy instances and resilience during downtime.
+| Metric | Coverage |
+|--------|-----------|
+| **Instructions** | **90% (831 / 917 covered)** |
+| **Branches** | **78% (52 / 66 covered)** |
+| **Lines** | **89% (191 / 212 covered)** |
+| **Methods** | **91% (51 / 56 covered)** |
+| **Classes** | **100% (18 / 18 covered)** |
 
-- **Health Checks**  
-  - Implement periodic and startup-time health checks for downstream instances to dynamically update their availability in
-  the Service Registry.
-- **Chain of Responsibility**
+> 📊 Coverage report generated with **JaCoCo 0.8.12**
 
-  - Create and configure a chain of processors to which the request will be submitted for validation and security
-  filtering
 
----
 ## Application architecture
 
 ![img.png](https://private-user-images.githubusercontent.com/39200728/499093166-153a0980-cbbe-481e-8a8f-a06e39d5618d.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NTk5NjI2MTYsIm5iZiI6MTc1OTk2MjMxNiwicGF0aCI6Ii8zOTIwMDcyOC80OTkwOTMxNjYtMTUzYTA5ODAtY2JiZS00ODFlLThhOGYtYTA2ZTM5ZDU2MThkLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTEwMDglMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUxMDA4VDIyMjUxNlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWUxNDQ4ZDUxNGE0NmM1YThmMzk3YTUwZmNiOGVmOTRiN2ViODFkZTE5NzgzOGZiNjRkZjExYmEzOTBiZmU0ODQmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.IiiaWQ8YE52q1fnkgo06v2sM-qo0p-tM_PSTFcoFrdk)
@@ -154,6 +157,37 @@ ref: https://minikube.sigs.k8s.io/docs/handbook/accessing/
 6. Start making requests to : http://my-service.my-company.com:64060/ with minukube opened port.
 
 ---
+
+## Future Improvements
+
+- **Throttling & Rate Limiting**
+    - Prevent overload and protect against DoS attacks. (Token bucket, fixed window) algorithms
+
+- **Enhance Caching**
+
+    - Support ETAG and LastModified Headers for cached content revalidation after expiry.
+
+    - Integrate external caches (Redis) for consistent caching across proxy instances and resilience during downtime.
+
+- **Health Checks**
+    - Implement periodic and startup-time health checks for downstream instances to dynamically update their availability in
+      the Service Registry.
+- **Chain of Responsibility**
+
+    - Create and configure a chain of processors to which the request will be submitted for validation and security
+      filtering
+---
+**AI Assistance Acknowledgment**
+
+During the development of JRoxy, I used AI as a coding assistant to accelerate development and improve documentation quality.
+The AI was used to:
+
+- Generate initial code snippets for utility classes and test scaffolding.
+- Assist in crafting header parsing logic for cache validation and expiration handling
+- Suggest documentation structure and wording improvements.
+
+All AI-generated snippets were reviewed, refactored, and integrated manually, ensuring full alignment with the project’s architecture and requirements.
+The final implementation, testing, and deployment reflect my own engineering design, understanding, and validation.
 
 ## References
 
