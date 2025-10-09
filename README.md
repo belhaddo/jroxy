@@ -95,17 +95,20 @@ Custom strategies can be implemented by implementing the `LoadBalancerStrategy` 
 ## Future Improvements
 
 - **Throttling & Rate Limiting**  
-  Prevent overload and protect against DoS attacks. (Token bucket, fixed window) algorithms
+  - Prevent overload and protect against DoS attacks. (Token bucket, fixed window) algorithms
 
-- **Distributed Caching**  
-  Integrate external caches (Redis) for consistent caching across proxy instances and resilience during downtime.
+- **Enhance Caching** 
+
+  - Support ETAG and LastModified Headers for cached content revalidation after expiry.
+
+  - Integrate external caches (Redis) for consistent caching across proxy instances and resilience during downtime.
 
 - **Health Checks**  
-  Implement periodic and startup-time health checks for downstream instances to dynamically update their availability in
+  - Implement periodic and startup-time health checks for downstream instances to dynamically update their availability in
   the Service Registry.
 - **Chain of Responsibility**
 
-  Create and configure a chain of processors to which the request will be submitted for validation and security
+  - Create and configure a chain of processors to which the request will be submitted for validation and security
   filtering
 
 ---

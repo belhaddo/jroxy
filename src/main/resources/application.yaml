@@ -6,3 +6,5 @@ server:
 logging:
   level:
     root: DEBUG
+proxy:
+  default-load-balancing: "randomStrategy"

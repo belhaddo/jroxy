@@ -19,22 +19,17 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-// AI Generated
 class LoadBalancerContextImplTest {
 
+    private final Map<String, LoadBalancerStrategy> strategyMap = new HashMap<>();
     @Mock
     private JRoxyConfig jRoxyConfig;
-
     @Mock
     private ServiceRegistry serviceRegistry;
-
     @Mock
     private LoadBalancerStrategy loadBalancerStrategy;
-
     @InjectMocks
     private LoadBalancerContextImpl loadBalancerContext;
-
-    private final Map<String, LoadBalancerStrategy> strategyMap = new HashMap<>();
 
     @BeforeEach
     void setUp() {
