@@ -8,6 +8,9 @@ The repository includes:
 - **JRoxy source code** — core proxy and supporting services
 - **Helm chart** — `helm/jroxy` for deployment
 - **Demo client Helm chart** — `helm/client` to simulate traffic for testing
+
+
+    Docker Hub Repository : https://hub.docker.com/repositories/badelh070
 ---
 
 ## Core Features
@@ -30,7 +33,7 @@ When a request is received:
 2. It queries the **Service Registry** for available instances of that service.
 3. The **LoadBalancer** selects an instance based on the configured load-balancing strategy.
 4. The request is then proxied to the selected instance.
-
+5. If a request fails due to a host unreachable error, a retry policy is applied to automatically reroute the request to an alternate available host.
 ---
 
 ### 3. Caching
@@ -138,7 +141,7 @@ Custom strategies can be implemented by implementing the `LoadBalancerStrategy` 
     - **macOS:**
       ```bash
       git clone git@github.com:belhaddo/jroxy.git
-      cd cd jroxy/helm/
+      cd jroxy/helm/
       helm install jroxy ./jroxy
       helm install client ./client
       ```
