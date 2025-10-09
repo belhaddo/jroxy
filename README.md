@@ -177,6 +177,17 @@ ref: https://minikube.sigs.k8s.io/docs/handbook/accessing/
     - Create and configure a chain of processors to which the request will be submitted for validation and security
       filtering
 ---
+**AI Assistance Acknowledgment**
+
+During the development of JRoxy, I used AI as a coding assistant to accelerate development and improve documentation quality.
+The AI was used to:
+
+- Generate initial code snippets for utility classes and test scaffolding.
+- Assist in crafting header parsing logic for cache validation and expiration handling
+- Suggest documentation structure and wording improvements.
+
+All AI-generated snippets were reviewed, refactored, and integrated manually, ensuring full alignment with the project’s architecture and requirements.
+The final implementation, testing, and deployment reflect my own engineering design, understanding, and validation.
 
 ## References
 
