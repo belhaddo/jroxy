@@ -117,26 +117,7 @@ Total tests raise the overall project coverage to:
 
 > 📊 Coverage report generated with **JaCoCo 0.8.12**
 
-## Future Improvements
 
-- **Throttling & Rate Limiting**  
-  - Prevent overload and protect against DoS attacks. (Token bucket, fixed window) algorithms
-
-- **Enhance Caching** 
-
-  - Support ETAG and LastModified Headers for cached content revalidation after expiry.
-
-  - Integrate external caches (Redis) for consistent caching across proxy instances and resilience during downtime.
-
-- **Health Checks**  
-  - Implement periodic and startup-time health checks for downstream instances to dynamically update their availability in
-  the Service Registry.
-- **Chain of Responsibility**
-
-  - Create and configure a chain of processors to which the request will be submitted for validation and security
-  filtering
-
----
 ## Application architecture
 
 ![img.png](https://private-user-images.githubusercontent.com/39200728/499093166-153a0980-cbbe-481e-8a8f-a06e39d5618d.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NTk5NjI2MTYsIm5iZiI6MTc1OTk2MjMxNiwicGF0aCI6Ii8zOTIwMDcyOC80OTkwOTMxNjYtMTUzYTA5ODAtY2JiZS00ODFlLThhOGYtYTA2ZTM5ZDU2MThkLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTEwMDglMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUxMDA4VDIyMjUxNlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWUxNDQ4ZDUxNGE0NmM1YThmMzk3YTUwZmNiOGVmOTRiN2ViODFkZTE5NzgzOGZiNjRkZjExYmEzOTBiZmU0ODQmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.IiiaWQ8YE52q1fnkgo06v2sM-qo0p-tM_PSTFcoFrdk)
@@ -175,6 +156,26 @@ ref: https://minikube.sigs.k8s.io/docs/handbook/accessing/
       ```
 6. Start making requests to : http://my-service.my-company.com:64060/ with minukube opened port.
 
+---
+
+## Limitations and Future Improvements
+
+- **Throttling & Rate Limiting**
+    - Prevent overload and protect against DoS attacks. (Token bucket, fixed window) algorithms
+
+- **Enhance Caching**
+
+    - Support ETAG and LastModified Headers for cached content revalidation after expiry.
+
+    - Integrate external caches (Redis) for consistent caching across proxy instances and resilience during downtime.
+
+- **Health Checks**
+    - Implement periodic and startup-time health checks for downstream instances to dynamically update their availability in
+      the Service Registry.
+- **Chain of Responsibility**
+
+    - Create and configure a chain of processors to which the request will be submitted for validation and security
+      filtering
 ---
 
 ## References
