@@ -158,7 +158,7 @@ ref: https://minikube.sigs.k8s.io/docs/handbook/accessing/
 
 ---
 
-## Limitations and Future Improvements
+## Future Improvements
 
 - **Throttling & Rate Limiting**
     - Prevent overload and protect against DoS attacks. (Token bucket, fixed window) algorithms
